@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Temperatura do PH</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #4002a3, #590d8b);
+            color: white;
+            margin: 50px;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
+        }
+        input, select, button {
+            margin: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #ff5722;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #e64a19;
+        }
+        h1, h2 {
+            border-bottom: 2px solid white;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .info {
+            text-align: left;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversor de Temperatura Pedro H</h1>
+        <input type="number" id="inputTemp" placeholder="Digite a temperatura">
+        <select id="fromUnit">
+            <option value="C">Celsius (°C)</option>
+            <option value="F">Fahrenheit (°F)</option>
+            <option value="K">Kelvin (K)</option>
+        </select>
+        <button onclick="convertTemperature()">Converter</button>
+        <p id="result"></p>
+        <p id="formula"></p>
+        
+        <h2>Ponto de Ebulição da Água na sua Localização</h2>
+        <button onclick="getLocation()">Descobrir</button>
+        <p id="location"></p>
+        <p id="boilingPoint"></p>
+
+        <div class="info">
+            <h2>Tipos de Termômetros</h2>
+            <ul>
+                <li><strong>Termômetro de Mercúrio:</strong> Utilizado tradicionalmente, mas menos comum devido à toxicidade do mercúrio.</li>
+                <li><strong>Termômetro Digital:</strong> Utiliza sensores eletrônicos para medir a temperatura rapidamente.</li>
+                <li><strong>Termômetro Infravermelho:</strong> Mede a temperatura sem contato, ideal para medir a temperatura corporal ou de superfícies.</li>
+                <li><strong>Termômetro de Álcool:</strong> Alternativa ao mercúrio, utiliza álcool colorido para indicar a temperatura.</li>
+                <li><strong>Termômetro de Gás:</strong> Mede a variação de pressão em um gás selado para determinar a temperatura.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        function convertTemperature() {
+            let temp = parseFloat(document.getElementById('inputTemp').value);
+            let fromUnit = document.getElementById('fromUnit').value;
+            let result = '';
+            let formula = '';
+
+            if (isNaN(temp)) {
+                document.getElementById('result').innerText = "Por favor, insira um número válido.";
+                document.getElementById('formula').innerText = "";
+                return;
+            }
+
+            if (fromUnit === 'C') {
+                let fahrenheit = (temp * 9/5) + 32;
+                let kelvin = temp + 273.15;
+                result = `Fahrenheit: ${fahrenheit.toFixed(2)} °F, Kelvin: ${kelvin.toFixed(2)} K`;
+                formula = `Fórmulas: (°C × 9/5) + 32 = °F | °C + 273.15 = K`;
+            } else if (fromUnit === 'F') {
+                let celsius = (temp - 32) * 5/9;
+                let kelvin = (temp - 32) * 5/9 + 273.15;
+                result = `Celsius: ${celsius.toFixed(2)} °C, Kelvin: ${kelvin.toFixed(2)} K`;
+                formula = `Fórmulas: (°F - 32) × 5/9 = °C | ((°F - 32) × 5/9) + 273.15 = K`;
+            } else if (fromUnit === 'K') {
+                let celsius = temp - 273.15;
+                let fahrenheit = (temp - 273.15) * 9/5 + 32;
+                result = `Celsius: ${celsius.toFixed(2)} °C, Fahrenheit: ${fahrenheit.toFixed(2)} °F`;
+                formula = `Fórmulas: K - 273.15 = °C | (K - 273.15) × 9/5 + 32 = °F`;
+            }
+            
+            document.getElementById('result').innerText = result;
+            document.getElementById('formula').innerText = formula;
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('location').innerText = "Geolocalização não suportada pelo seu navegador.";
+            }
+        }
+
+        function showPosition(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+            document.getElementById('location').innerText = `Latitude: ${lat}, Longitude: ${lon}`;
+            
+            // Exemplo de como obter a altitude
+            fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${lat},${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    let altitude = data.results[0].elevation;
+                    let boilingPoint = 100 - (altitude / 285);
+                    document.getElementById('boilingPoint').innerText = `A água ferve a aproximadamente ${boilingPoint.toFixed(2)}°C na sua localização.`;
+                })
+                .catch(error => {
+                    console.error("Erro ao obter altitude:", error);
+                    document.getElementById('boilingPoint').innerText = "Não foi possível obter o ponto de ebulição.";
+                });
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('location').innerText = "Permissão de localização negada.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('location').innerText = "Localização indisponível.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('location').innerText = "A solicitação de geolocalização expirou.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('location').innerText = "Ocorreu um erro desconhecido.";
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
