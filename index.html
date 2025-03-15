@@ -8,18 +8,18 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: linear-gradient(to right, #4002a3, #590d8b);
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
             color: white;
             margin: 50px;
         }
         .container {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.6);
             padding: 20px;
             border-radius: 10px;
             display: inline-block;
             width: 80%;
             max-width: 600px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
         }
         input, select, button {
             margin: 10px;
@@ -49,115 +49,194 @@
             padding: 15px;
             border-radius: 10px;
         }
+        .signature {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
+</html>
+    <div class="signature">Feito por: Pedro Henrique dos Santos 2A</div>
     <div class="container">
-        <h1>Conversor de Temperatura Pedro H</h1>
-        <input type="number" id="inputTemp" placeholder="Digite a temperatura">
-        <select id="fromUnit">
-            <option value="C">Celsius (°C)</option>
-            <option value="F">Fahrenheit (°F)</option>
-            <option value="K">Kelvin (K)</option>
-        </select>
-        <button onclick="convertTemperature()">Converter</button>
-        <p id="result"></p>
-        <p id="formula"></p>
-        
-        <h2>Ponto de Ebulição da Água na sua Localização</h2>
-        <button onclick="getLocation()">Descobrir</button>
-        <p id="location"></p>
-        <p id="boilingPoint"></p>
-
-        <div class="info">
-            <h2>Tipos de Termômetros</h2>
-            <ul>
-                <li><strong>Termômetro de Mercúrio:</strong> Utilizado tradicionalmente, mas menos comum devido à toxicidade do mercúrio.</li>
-                <li><strong>Termômetro Digital:</strong> Utiliza sensores eletrônicos para medir a temperatura rapidamente.</li>
-                <li><strong>Termômetro Infravermelho:</strong> Mede a temperatura sem contato, ideal para medir a temperatura corporal ou de superfícies.</li>
-                <li><strong>Termômetro de Álcool:</strong> Alternativa ao mercúrio, utiliza álcool colorido para indicar a temperatura.</li>
-                <li><strong>Termômetro de Gás:</strong> Mede a variação de pressão em um gás selado para determinar a temperatura.</li>
-            </ul>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Conversor de Temperatura</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                background: linear-gradient(to right, #2c3e50, #4ca1af);
+                color: white;
+                margin: 50px;
+            }
+            .container {
+                background: rgba(0, 0, 0, 0.6);
+                padding: 20px;
+                border-radius: 10px;
+                display: inline-block;
+                width: 80%;
+                max-width: 600px;
+                box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+            }
+            input, select, button {
+                margin: 10px;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            button {
+                background-color: #ff5722;
+                color: white;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+            button:hover {
+                background-color: #e64a19;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Conversor de Temperatura</h1>
+            <input type="number" id="inputTemp" placeholder="Digite a temperatura">
+            <select id="fromUnit">
+                <option value="C">Celsius (°C)</option>
+                <option value="F">Fahrenheit (°F)</option>
+                <option value="K">Kelvin (K)</option>
+            </select>
+            <button onclick="convertTemperature()">Converter</button>
+            <p id="result"></p>
+            <p id="formula"></p>
         </div>
-    </div>
+        <script>
+            function convertTemperature() {
+                let temp = parseFloat(document.getElementById("inputTemp").value);
+                let fromUnit = document.getElementById("fromUnit").value;
+                let result = "";
+                let formula = "";
     
-    <script>
-        function convertTemperature() {
-            let temp = parseFloat(document.getElementById('inputTemp').value);
-            let fromUnit = document.getElementById('fromUnit').value;
-            let result = '';
-            let formula = '';
-
-            if (isNaN(temp)) {
-                document.getElementById('result').innerText = "Por favor, insira um número válido.";
-                document.getElementById('formula').innerText = "";
-                return;
+                if (isNaN(temp)) {
+                    document.getElementById("result").innerText = "Por favor, insira um número válido.";
+                    return;
+                }
+    
+                if (fromUnit === "C") {
+                    let fahrenheit = (temp * 9/5) + 32;
+                    let kelvin = temp + 273.15;
+                    result = `${temp}°C = ${fahrenheit.toFixed(2)}°F = ${kelvin.toFixed(2)}K`;
+                    formula = `Fahrenheit = (°C × 9/5) + 32\nKelvin = °C + 273.15`;
+                } else if (fromUnit === "F") {
+                    let celsius = (temp - 32) * 5/9;
+                    let kelvin = (temp - 32) * 5/9 + 273.15;
+                    result = `${temp}°F = ${celsius.toFixed(2)}°C = ${kelvin.toFixed(2)}K`;
+                    formula = `Celsius = (°F - 32) × 5/9\nKelvin = (°F - 32) × 5/9 + 273.15`;
+                } else if (fromUnit === "K") {
+                    let celsius = temp - 273.15;
+                    let fahrenheit = (temp - 273.15) * 9/5 + 32;
+                    result = `${temp}K = ${celsius.toFixed(2)}°C = ${fahrenheit.toFixed(2)}°F`;
+                    formula = `Celsius = K - 273.15\nFahrenheit = (K - 273.15) × 9/5 + 32`;
+                }
+                
+                document.getElementById("result").innerText = result;
+                document.getElementById("formula").innerText = formula;
             }
-
-            if (fromUnit === 'C') {
-                let fahrenheit = (temp * 9/5) + 32;
-                let kelvin = temp + 273.15;
-                result = `Fahrenheit: ${fahrenheit.toFixed(2)} °F, Kelvin: ${kelvin.toFixed(2)} K`;
-                formula = `Fórmulas: (°C × 9/5) + 32 = °F | °C + 273.15 = K`;
-            } else if (fromUnit === 'F') {
-                let celsius = (temp - 32) * 5/9;
-                let kelvin = (temp - 32) * 5/9 + 273.15;
-                result = `Celsius: ${celsius.toFixed(2)} °C, Kelvin: ${kelvin.toFixed(2)} K`;
-                formula = `Fórmulas: (°F - 32) × 5/9 = °C | ((°F - 32) × 5/9) + 273.15 = K`;
-            } else if (fromUnit === 'K') {
-                let celsius = temp - 273.15;
-                let fahrenheit = (temp - 273.15) * 9/5 + 32;
-                result = `Celsius: ${celsius.toFixed(2)} °C, Fahrenheit: ${fahrenheit.toFixed(2)} °F`;
-                formula = `Fórmulas: K - 273.15 = °C | (K - 273.15) × 9/5 + 32 = °F`;
-            }
-            
-            document.getElementById('result').innerText = result;
-            document.getElementById('formula').innerText = formula;
-        }
-
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                document.getElementById('location').innerText = "Geolocalização não suportada pelo seu navegador.";
-            }
-        }
-
-        function showPosition(position) {
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
-            document.getElementById('location').innerText = `Latitude: ${lat}, Longitude: ${lon}`;
-            
-            // Exemplo de como obter a altitude
-            fetch(`https://api.open-elevation.com/api/v1/lookup?locations=${lat},${lon}`)
-                .then(response => response.json())
-                .then(data => {
-                    let altitude = data.results[0].elevation;
-                    let boilingPoint = 100 - (altitude / 285);
-                    document.getElementById('boilingPoint').innerText = `A água ferve a aproximadamente ${boilingPoint.toFixed(2)}°C na sua localização.`;
-                })
-                .catch(error => {
-                    console.error("Erro ao obter altitude:", error);
-                    document.getElementById('boilingPoint').innerText = "Não foi possível obter o ponto de ebulição.";
-                });
-        }
-
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    document.getElementById('location').innerText = "Permissão de localização negada.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    document.getElementById('location').innerText = "Localização indisponível.";
-                    break;
-                case error.TIMEOUT:
-                    document.getElementById('location').innerText = "A solicitação de geolocalização expirou.";
-                    break;
-                case error.UNKNOWN_ERROR:
-                    document.getElementById('location').innerText = "Ocorreu um erro desconhecido.";
-                    break;
-            }
-        }
-    </script>
+        </script>
+    </body>
+    </html>
+    
+        
+        <h2>Variedades de Termômetros e suas Peculiaridades</h2>
+        <ul>
+            <li><strong>Termômetro de Mercúrio:</strong> Preciso e durável, mas tóxico se quebrado.</li>
+            <li><strong>Termômetro de Álcool:</strong> Seguro e ideal para temperaturas muito baixas.</li>
+            <li><strong>Termômetro Digital:</strong> Mede a temperatura através de sensores eletrônicos. Rápido e preciso.</li>
+            <li><strong>Termômetro Infravermelho:</strong> Mede a radiação infravermelha emitida por um objeto. Não necessita contato.</li>
+            <li><strong>Termopar:</strong> Usa dois metais diferentes para medir a temperatura. Muito utilizado na indústria.</li>
+            <li><strong>Pirômetro:</strong> Mede altas temperaturas sem contato direto, comum em fornalhas e indústrias siderúrgicas.</li>
+        </ul>
+        <h2>Regras de Três e suas Aplicações</h2>
+        <p>A regra de três é utilizada para resolver problemas de proporção e pode ser:</p>
+        <ul>
+            <li><strong>Simples:</strong> Relação entre três valores conhecidos e um desconhecido.</li>
+            <li><strong>Composta:</strong> Envolve mais de duas variáveis relacionadas.</li>
+        </ul>
+        <p>Exemplos de uso: Conversão de medidas, cálculo de preço unitário, proporção de ingredientes, ajuste de tempo e distância.</p>
+        <!DOCTYPE html>
+        <html lang="pt-br">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Tabela de Conversão de Temperatura</title>
+            <style>
+                body {
+                    text-align: center;
+                }
+                table {
+                    margin: 0 auto;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    padding: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <h2>Tabela de Conversão de Temperatura</h2>
+            <table border="1">
+                <tr>
+                    <th>Evento</th><th>Celsius (°C)</th><th>Fahrenheit (°F)</th><th>Kelvin (K)</th>
+                </tr>
+                <tr>
+                    <td>Zero Absoluto</td><td>-273,15</td><td>-459,67</td><td>0</td>
+                </tr>
+                <tr>
+                    <td>Solidificação da água</td><td>0</td><td>32</td><td>273,15</td>
+                </tr>
+                <tr>
+                    <td>Ebulição da água</td><td>100</td><td>212</td><td>373,15</td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        
+        <h2>Processos de Mudança de Estado Físico</h2>
+        <ul>
+            <li><strong>Sublimação:</strong> Sólido → Gasoso (ex: gelo seco).</li>
+            <li><strong>Ressublimação:</strong> Gasoso → Sólido (ex: formação de geada).</li>
+            <li><strong>Condensação:</strong> Gasoso → Líquido (ex: orvalho na grama).</li>
+            <li><strong>Vaporização:</strong> Líquido → Gasoso.</li>
+            <li><strong>Solidificação:</strong> Líquido → Sólido (ex: congelação da água).</li>
+            <li><strong>Fusão:</strong> Sólido → Líquido (ex: derretimento do gelo).</li>
+        </ul>
+        <h2>Ponto de Vaporização e Solidificação em Diferentes Locais</h2>
+        <table border="1">
+            <tr>
+                <th>Local</th><th>Altitude (m)</th><th>Ponto de Ebulição (°C)</th><th>Ponto de Ebulição (°F)</th><th>Ponto de Ebulição (K)</th>
+            </tr>
+            <tr>
+                <td>São Paulo</td><td>760</td><td>99,6</td><td>211,3</td><td>372,75</td>
+            </tr>
+            <tr>
+                <td>Monte Everest</td><td>8.848</td><td>71</td><td>159,8</td><td>344,15</td>
+            </tr>
+            <tr>
+                <td>Lesoto</td><td>1.400</td><td>95</td><td>203</td><td>368,15</td>
+            </tr>
+            <tr>
+                <td>Pico da Neblina</td><td>2.995</td><td>91</td><td>195,8</td><td>364,15</td>
+            </tr>
+            <tr>
+                <td>Santos</td><td>2</td><td>99,9</td><td>211,8</td><td>373,05</td>
+            </tr>
+        </table>
+        <p>A variação dos pontos de ebulição ocorre devido à diferença de pressão atmosférica, que é menor em locais mais altos.</p>
+    </div>
 </body>
 </html>
